@@ -13,12 +13,12 @@ public class Bullet : MonoBehaviour
         rb.velocity = Vector3.right * speed;
     }
 
-    //private void OnCollisionEnter(Collision collision)
-    //{
-    //    if (collision.gameObject.CompareTag("beast"))
-    //    {
-    //        gameObject.SetActive(false);
-    //    }
-    //}
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("enemy"))
+        {
+            ObjectPoolManager.Instance.ReturnToPool(gameObject);
+        }
+    }
 }
 

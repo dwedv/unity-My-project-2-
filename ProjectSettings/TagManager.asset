@@ -7,6 +7,8 @@ TagManager:
   - Ground
   - Capsule
   - player
+  - enemy
+  - bullet
   layers:
   - Default
   - TransparentFX

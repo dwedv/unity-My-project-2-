@@ -13,41 +13,53 @@ public class ObjectPoolManager : MonoBehaviour
 
     void Awake()
     {
+
         Instance = this;
 
-        // Initialize the pool
+        InitializePool();
+    }
+
+    // Combined initialization logic into a single method
+    private void InitializePool()
+    {
         pooledObjects = new List<GameObject>();
         for (int i = 0; i < amountToPool; i++)
         {
-            GameObject obj = Instantiate(objectToPool);
-            obj.SetActive(false);
-            pooledObjects.Add(obj);
-        }
-    }
-
-    void Start()
-    {
-        for (int i = 0; i < amountToPool; i++)
-        {
-            GameObject obj = Instantiate(objectToPool);
-            obj.SetActive(false);
-            pooledObjects.Add(obj);
+            AddObjectToPool();
         }
     }
 
     // Method to get an object from the pool
     public GameObject GetPooledObject()
     {
-        // Look for an inactive object in the pool
-        for (int i = 0; i < pooledObjects.Count; i++)
+        foreach (var obj in pooledObjects)
         {
-            if (!pooledObjects[i].activeInHierarchy)
+            if (!obj.activeInHierarchy)
             {
-                return pooledObjects[i];
+                return obj;
             }
         }
 
-        // If all objects are active, instantiate a new one and add it to the pool
+        // Optionally, only expand pool if needed
+        return AddObjectToPool(); // Adds a new object to the pool and returns it
+    }
+
+    // Method to return an object to the pool
+    public void ReturnToPool(GameObject objectToReturn)
+    {
+        // First, check if the object is already in the pool to avoid duplicates
+        if (!pooledObjects.Contains(objectToReturn))
+        {
+            return; // Exit the function as there's nothing further to do
+        }
+
+        // Deactivate the object before returning it to the pool to make it available for reuse
+        objectToReturn.SetActive(false);
+    }
+
+    // Extracted method to add a new object to the pool
+    private GameObject AddObjectToPool()
+    {
         GameObject obj = Instantiate(objectToPool);
         obj.SetActive(false);
         pooledObjects.Add(obj);
